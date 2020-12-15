@@ -1,0 +1,5 @@
+include ':libim'
+include ':libcall'
+include ':framework'
+include ':app'
+rootProject.name = "YunIMApp"

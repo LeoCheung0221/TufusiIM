@@ -1,0 +1,53 @@
+apply plugin: 'com.android.library'
+
+android {
+    // HttpClient 使用库
+    useLibrary rootProject.ext.useLibs["httpclient"]
+
+    compileSdkVersion rootProject.ext.android["compileSdkVersion"]
+    buildToolsVersion rootProject.ext.android["buildToolsVersion"]
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.android["minSdkVersion"]
+        targetSdkVersion rootProject.ext.android["targetSdkVersion"]
+        versionCode rootProject.ext.android["versionCode"]
+        versionName rootProject.ext.android["versionName"]
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        debug {
+            // 自定义Gradle常量
+            buildConfigField("boolean", "LOG_DEBUG", "true")
+            buildConfigField("String", "LOG_TAG", "\"TufusiIM\"")
+            buildConfigField("boolean", "SP_NAME", "\"Config\"")
+        }
+
+        release {
+            buildConfigField("boolean", "LOG_DEBUG", "true")
+            buildConfigField("String", "LOG_TAG", "\"TufusiIM\"")
+            buildConfigField("String", "SP_NAME", "\"Config\"")
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+def commonDependencies = this.getRootProject().ext.dependencies
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    // 循环引入依赖项
+    commonDependencies.each { k, v ->
+        api v
+    }
+
+    //Cloud
+    api project(path: ':libim')
+    //Call
+    api project(path: ':libcall')
+    //Voice
+    api files('libs/Msc.jar')
+}
